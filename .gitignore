@@ -1,0 +1,38 @@
+# Java
+target/
+*.class
+*.jar
+*.war
+.idea/
+*.iml
+*.log
+
+# Maven
+.mvn/
+mvnw
+mvnw.cmd
+
+# Upload files (user uploads)
+upload/
+
+# Node (for frontend)
+node_modules/
+dist/
+.npm/
+
+# IDE
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build
+*.class
+*.exe
+
+# Cursor
+.cursor/
+.cursor/plans/

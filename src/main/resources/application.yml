@@ -1,0 +1,54 @@
+spring.application.name: octopus-mall
+spring:
+  datasource:
+    driver-class-name: oracle.jdbc.OracleDriver
+    url: jdbc:oracle:thin:@//127.0.0.1:1521/orcl
+    username: bazhuayu
+    password: bazhuayu@123456
+    hikari:
+      maximum-pool-size: 10
+      connection-timeout: 30000
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      database: 0
+
+mybatis-plus:
+  # xml路径
+  mapper-locations: classpath*:mapper/**/*.xml
+  # 多个实体包，逗号隔开，扫描所有存放entity的包
+  type-aliases-package: com.octopusmall.common.global.entity,com.octopusmall.business.entity,com.octopusmall.customer.entity,com.octopusmall.rider.entity
+  global-config:
+    db-config:
+      id-type: assign_id
+      logic-delete-field: isDeleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+  configuration:
+    map-underscore-to-camel-case: true
+    # 重要：解决Oracle null参数 无效列类型1111
+    jdbc-type-for-null: 'null'
+
+# 雪花id配置
+snowflake:
+  work-id: 1
+  data-center-id: 1
+
+jwt:
+  secret: octopus‑mall‑secret‑2026‑very‑long‑secret‑key‑72681358
+  expire-ms: 86400000 #24h
+
+# 用户权限相关配置，自定义
+auth:
+  redis:
+    jwt-black-prefix: "jwt-black-"
+    user-perm-prefix: "user-perm-"
+
+# 文件上传配置
+file:
+  upload:
+    base-path: E:\AI Project\octopus-mall\upload
+    avatar-path: avatar
+    avatar-max-size: 5MB
+    avatar-allowed-types: jpg,jpeg,png,gif,webp,

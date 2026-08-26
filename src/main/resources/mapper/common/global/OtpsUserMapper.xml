@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.octopusmall.common.global.mapper.OtpsUserMapper">
+
+    <insert id="insertUser">
+        INSERT INTO otps_user (
+            id,
+            account,
+            password,
+            nickname,
+            user_image,
+            phone_number,
+            email,
+            type,
+            status,
+            audit_status,
+            audit_remark,
+            create_time,
+            update_time,
+            is_deleted
+        ) VALUES (
+                     #{user.id},
+                     #{user.account},
+                     #{user.password},
+                     #{user.nickname},
+                     #{user.userImage},
+                     #{user.phoneNumber},
+                     #{user.email},
+                     #{user.type},
+                     #{user.status},
+                     #{user.auditStatus},
+                     #{user.auditRemark},
+                     #{user.createTime},
+                     #{user.updateTime},
+                     #{user.isDeleted}
+                 )
+    </insert>
+
+    <select id="selectByAccount" resultType="OtpsUser">
+        SELECT
+            id,
+            account,
+            password,
+            nickname,
+            user_image,
+            phone_number,
+            email,
+            type,
+            status,
+            audit_status,
+            audit_remark,
+            create_time,
+            update_time,
+            is_deleted
+        FROM otps_user
+        WHERE account = #{account} AND is_deleted = 0
+    </select>
+
+    <select id="selectByPhoneNumber" resultType="OtpsUser">
+        SELECT
+            id,
+            account,
+            password,
+            nickname,
+            user_image,
+            phone_number,
+            email,
+            type,
+            status,
+            audit_status,
+            audit_remark,
+            create_time,
+            update_time,
+            is_deleted
+        FROM otps_user
+        WHERE phone_number = #{phoneNumber} AND is_deleted = 0
+    </select>
+
+    <insert id="insertUserHis">
+        INSERT INTO otps_user_his (
+            his_id,
+            id,
+            account,
+            password,
+            nickname,
+            user_image,
+            phone_number,
+            email,
+            type,
+            status,
+            audit_status,
+            audit_remark,
+            create_time,
+            update_time,
+            is_deleted,
+            his_create_time
+        ) VALUES (
+                     #{userHis.hisId},
+                     #{userHis.id},
+                     #{userHis.account},
+                     #{userHis.password},
+                     #{userHis.nickname},
+                     #{userHis.userImage},
+                     #{userHis.phoneNumber},
+                     #{userHis.email},
+                     #{userHis.type},
+                     #{userHis.status},
+                     #{userHis.auditStatus},
+                     #{userHis.auditRemark},
+                     #{userHis.createTime},
+                     #{userHis.updateTime},
+                     #{userHis.isDeleted},
+                     #{userHis.hisCreateTime}
+                 )
+    </insert>
+
+    <select id="selectById" resultType="OtpsUser">
+        SELECT
+            id,
+            account,
+            password,
+            nickname,
+            user_image,
+            phone_number,
+            email,
+            type,
+            status,
+            audit_status,
+            audit_remark,
+            create_time,
+            update_time,
+            is_deleted
+        FROM otps_user
+        WHERE id = #{id} AND is_deleted = 0
+    </select>
+
+</mapper>

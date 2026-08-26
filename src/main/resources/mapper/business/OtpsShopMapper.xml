@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.octopusmall.common.global.mapper.OtpsShopMapper">
+
+    <insert id="insertShop" parameterType="OtpsShop">
+        INSERT INTO otps_shop (
+            id,
+            user_id,
+            shop_name,
+            province,
+            city,
+            detail_address,
+            category,
+            description,
+            avatar_url,
+            contact_name,
+            contact_phone,
+            license_no,
+            license_photo_url,
+            license_expire_date,
+            audit_status,
+            shop_status,
+            create_time,
+            update_time
+        ) VALUES (
+            #{shop.id},
+            #{shop.userId},
+            #{shop.shopName},
+            #{shop.province},
+            #{shop.city},
+            #{shop.detailAddress},
+            #{shop.category},
+            #{shop.description},
+            #{shop.avatarUrl},
+            #{shop.contactName},
+            #{shop.contactPhone},
+            #{shop.licenseNo},
+            #{shop.licensePhotoUrl},
+            #{shop.licenseExpireDate},
+            #{shop.auditStatus},
+            #{shop.shopStatus},
+            #{shop.createTime},
+            #{shop.updateTime}
+        )
+    </insert>
+
+    <update id="updateShop" parameterType="OtpsShop">
+        UPDATE otps_shop
+        <set>
+            <if test="shop.shopName != null and shop.shopName != ''">
+                shop_name = #{shop.shopName},
+            </if>
+            <if test="shop.province != null and shop.province != ''">
+                province = #{shop.province},
+            </if>
+            <if test="shop.city != null and shop.city != ''">
+                city = #{shop.city},
+            </if>
+            <if test="shop.detailAddress != null and shop.detailAddress != ''">
+                detail_address = #{shop.detailAddress},
+            </if>
+            <if test="shop.category != null and shop.category != ''">
+                category = #{shop.category},
+            </if>
+            <if test="shop.description != null">
+                description = #{shop.description},
+            </if>
+            <if test="shop.avatarUrl != null">
+                avatar_url = #{shop.avatarUrl},
+            </if>
+            <if test="shop.contactName != null and shop.contactName != ''">
+                contact_name = #{shop.contactName},
+            </if>
+            <if test="shop.contactPhone != null and shop.contactPhone != ''">
+                contact_phone = #{shop.contactPhone},
+            </if>
+            <if test="shop.licenseNo != null and shop.licenseNo != ''">
+                license_no = #{shop.licenseNo},
+            </if>
+            <if test="shop.licensePhotoUrl != null">
+                license_photo_url = #{shop.licensePhotoUrl},
+            </if>
+            <if test="shop.licenseExpireDate != null">
+                license_expire_date = #{shop.licenseExpireDate},
+            </if>
+            <if test="shop.shopStatus != null and shop.shopStatus != ''">
+                shop_status = #{shop.shopStatus},
+            </if>
+            update_time = SYSDATE
+        </set>
+        WHERE id = #{shop.id} AND user_id = #{shop.userId}
+    </update>
+
+    <select id="getShopById" resultType="com.octopusmall.business.dto.ShopRespDto">
+        SELECT
+            s.id,
+            s.user_id,
+            s.shop_name,
+            s.province,
+            s.city,
+            s.detail_address,
+            s.category,
+            d1.enum_name AS category_name,
+            s.description,
+            s.avatar_url,
+            s.contact_name,
+            s.contact_phone,
+            s.license_no,
+            s.license_photo_url,
+            s.license_expire_date,
+            s.audit_status,
+            d2.enum_name AS audit_status_name,
+            s.audit_remark,
+            s.audit_time,
+            s.shop_status,
+            d3.enum_name AS shop_status_name,
+            s.create_time,
+            s.update_time
+        FROM otps_shop s
+        LEFT JOIN otps_dict d1 ON d1.dict_id = 'shop:category' AND d1.enum_code = s.category
+        LEFT JOIN otps_dict d2 ON d2.dict_id = 'shop:audit_status' AND d2.enum_code = s.audit_status
+        LEFT JOIN otps_dict d3 ON d3.dict_id = 'shop:shop_status' AND d3.enum_code = s.shop_status
+        WHERE s.id = #{id}
+    </select>
+
+    <select id="getShopByUserId" resultType="com.octopusmall.business.dto.ShopRespDto">
+        SELECT
+            s.id,
+            s.user_id,
+            s.shop_name,
+            s.province,
+            s.city,
+            s.detail_address,
+            s.category,
+            d1.enum_name AS category_name,
+            s.description,
+            s.avatar_url,
+            s.contact_name,
+            s.contact_phone,
+            s.license_no,
+            s.license_photo_url,
+            s.license_expire_date,
+            s.audit_status,
+            d2.enum_name AS audit_status_name,
+            s.audit_remark,
+            s.audit_time,
+            s.shop_status,
+            d3.enum_name AS shop_status_name,
+            s.create_time,
+            s.update_time
+        FROM otps_shop s
+        LEFT JOIN otps_dict d1 ON d1.dict_id = 'shop:category' AND d1.enum_code = s.category
+        LEFT JOIN otps_dict d2 ON d2.dict_id = 'shop:audit_status' AND d2.enum_code = s.audit_status
+        LEFT JOIN otps_dict d3 ON d3.dict_id = 'shop:shop_status' AND d3.enum_code = s.shop_status
+        WHERE s.user_id = #{userId}
+    </select>
+
+    <select id="listShop" resultType="com.octopusmall.business.dto.ShopRespDto">
+        SELECT
+            s.id,
+            s.user_id,
+            s.shop_name,
+            s.province,
+            s.city,
+            s.detail_address,
+            s.category,
+            d1.enum_name AS category_name,
+            s.description,
+            s.avatar_url,
+            s.contact_name,
+            s.contact_phone,
+            s.license_no,
+            s.license_photo_url,
+            s.license_expire_date,
+            s.audit_status,
+            d2.enum_name AS audit_status_name,
+            s.audit_remark,
+            s.audit_time,
+            s.shop_status,
+            d3.enum_name AS shop_status_name,
+            s.create_time,
+            s.update_time
+        FROM otps_shop s
+        LEFT JOIN otps_dict d1 ON d1.dict_id = 'shop:category' AND d1.enum_code = s.category
+        LEFT JOIN otps_dict d2 ON d2.dict_id = 'shop:audit_status' AND d2.enum_code = s.audit_status
+        LEFT JOIN otps_dict d3 ON d3.dict_id = 'shop:shop_status' AND d3.enum_code = s.shop_status
+        <where>
+            <if test="query.id != null and query.id != ''">
+                AND s.id = #{query.id}
+            </if>
+            <if test="query.userId != null and query.userId != ''">
+                AND s.user_id = #{query.userId}
+            </if>
+            <if test="query.shopName != null and query.shopName != ''">
+                AND s.shop_name LIKE '%' || #{query.shopName} || '%'
+            </if>
+            <if test="query.category != null and query.category != ''">
+                AND s.category = #{query.category}
+            </if>
+            <if test="query.auditStatus != null and query.auditStatus != ''">
+                AND s.audit_status = #{query.auditStatus}
+            </if>
+            <if test="query.shopStatus != null and query.shopStatus != ''">
+                AND s.shop_status = #{query.shopStatus}
+            </if>
+            <if test="query.province != null and query.province != ''">
+                AND s.province = #{query.province}
+            </if>
+            <if test="query.city != null and query.city != ''">
+                AND s.city = #{query.city}
+            </if>
+        </where>
+        ORDER BY s.create_time DESC
+    </select>
+
+    <select id="listShopByAuditStatus" resultType="com.octopusmall.business.dto.ShopRespDto">
+        SELECT
+            s.id,
+            s.user_id,
+            s.shop_name,
+            s.province,
+            s.city,
+            s.detail_address,
+            s.category,
+            d1.enum_name AS category_name,
+            s.description,
+            s.avatar_url,
+            s.contact_name,
+            s.contact_phone,
+            s.license_no,
+            s.license_photo_url,
+            s.license_expire_date,
+            s.audit_status,
+            d2.enum_name AS audit_status_name,
+            s.audit_remark,
+            s.audit_time,
+            s.shop_status,
+            d3.enum_name AS shop_status_name,
+            s.create_time,
+            s.update_time
+        FROM otps_shop s
+        LEFT JOIN otps_dict d1 ON d1.dict_id = 'shop:category' AND d1.enum_code = s.category
+        LEFT JOIN otps_dict d2 ON d2.dict_id = 'shop:audit_status' AND d2.enum_code = s.audit_status
+        LEFT JOIN otps_dict d3 ON d3.dict_id = 'shop:shop_status' AND d3.enum_code = s.shop_status
+        WHERE s.audit_status = #{auditStatus}
+        ORDER BY s.create_time DESC
+    </select>
+
+</mapper>

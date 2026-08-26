@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.octopusmall.common.global.mapper.OtpsProductMapper">
+
+    <insert id="insertProduct" parameterType="com.octopusmall.business.entity.OtpsProduct">
+        INSERT INTO otps_product (
+            id,
+            shop_id,
+            name,
+            category,
+            price,
+            stock,
+            image_url,
+            remark,
+            status,
+            create_time,
+            update_time
+        ) VALUES (
+            #{product.id},
+            #{product.shopId},
+            #{product.name},
+            #{product.category},
+            #{product.price},
+            #{product.stock},
+            #{product.imageUrl},
+            #{product.remark},
+            #{product.status},
+            #{product.createTime},
+            #{product.updateTime}
+        )
+    </insert>
+
+    <update id="updateProduct" parameterType="com.octopusmall.business.entity.OtpsProduct">
+        UPDATE otps_product
+        <set>
+            <if test="product.name != null and product.name != ''">
+                name = #{product.name},
+            </if>
+            <if test="product.category != null and product.category != ''">
+                category = #{product.category},
+            </if>
+            <if test="product.price != null">
+                price = #{product.price},
+            </if>
+            <if test="product.stock != null">
+                stock = #{product.stock},
+            </if>
+            <if test="product.imageUrl != null">
+                image_url = #{product.imageUrl},
+            </if>
+            <if test="product.remark != null">
+                remark = #{product.remark},
+            </if>
+            <if test="product.status != null and product.status != ''">
+                status = #{product.status},
+            </if>
+            update_time = SYSDATE
+        </set>
+        WHERE id = #{product.id} AND shop_id = #{product.shopId}
+    </update>
+
+    <delete id="deleteProduct">
+        DELETE FROM otps_product
+        WHERE id = #{id} AND shop_id = #{shopId}
+    </delete>
+
+    <select id="getProductById" resultType="com.octopusmall.business.dto.ProductRespDto">
+        SELECT
+            p.id,
+            p.shop_id,
+            p.name,
+            p.category,
+            d1.enum_name AS category_name,
+            p.price,
+            p.stock,
+            p.image_url,
+            p.remark,
+            p.status,
+            d2.enum_name AS status_name,
+            p.create_time,
+            p.update_time
+        FROM otps_product p
+        LEFT JOIN otps_dict d1 ON d1.dict_id = 'product:category' AND d1.enum_code = p.category
+        LEFT JOIN otps_dict d2 ON d2.dict_id = 'product:status' AND d2.enum_code = p.status
+        WHERE p.id = #{id}
+    </select>
+
+    <select id="getProductByIdAndShopId" resultType="com.octopusmall.business.dto.ProductRespDto">
+        SELECT
+            p.id,
+            p.shop_id,
+            p.name,
+            p.category,
+            d1.enum_name AS category_name,
+            p.price,
+            p.stock,
+            p.image_url,
+            p.remark,
+            p.status,
+            d2.enum_name AS status_name,
+            p.create_time,
+            p.update_time
+        FROM otps_product p
+        LEFT JOIN otps_dict d1 ON d1.dict_id = 'product:category' AND d1.enum_code = p.category
+        LEFT JOIN otps_dict d2 ON d2.dict_id = 'product:status' AND d2.enum_code = p.status
+        WHERE p.id = #{id} AND p.shop_id = #{shopId}
+    </select>
+
+    <select id="listProduct" resultType="com.octopusmall.business.dto.ProductRespDto">
+        SELECT
+            p.id,
+            p.shop_id,
+            p.name,
+            p.category,
+            d1.enum_name AS category_name,
+            p.price,
+            p.stock,
+            p.image_url,
+            p.remark,
+            p.status,
+            d2.enum_name AS status_name,
+            p.create_time,
+            p.update_time
+        FROM otps_product p
+        LEFT JOIN otps_dict d1 ON d1.dict_id = 'product:category' AND d1.enum_code = p.category
+        LEFT JOIN otps_dict d2 ON d2.dict_id = 'product:status' AND d2.enum_code = p.status
+        <where>
+            <if test="query.id != null and query.id != ''">
+                AND p.id = #{query.id}
+            </if>
+            <if test="query.name != null and query.name != ''">
+                AND p.name LIKE '%' || #{query.name} || '%'
+            </if>
+            <if test="query.category != null and query.category != ''">
+                AND p.category = #{query.category}
+            </if>
+            <if test="query.status != null and query.status != ''">
+                AND p.status = #{query.status}
+            </if>
+            AND p.shop_id = #{shopId}
+        </where>
+        ORDER BY p.create_time DESC
+    </select>
+
+</mapper>
