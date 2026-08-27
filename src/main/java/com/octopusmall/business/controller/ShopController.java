@@ -59,7 +59,7 @@ public class ShopController {
     /**
      * 查询当前用户的店铺（商家用户点击"我的小店"时调用）
      */
-    @GetMapping("/my")
+    @GetMapping("/getMyShop")
 //    @Permission(name = "shop:my")
     public ResponseDto getMyShop() {
         ShopRespDto shop = otpsShopService.getMyShop();

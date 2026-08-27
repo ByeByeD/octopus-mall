@@ -24,29 +24,6 @@ public class FileUtil {
     @Value("${file.upload.base-path}")
     private String basePath;
 
-    @Value("${file.upload.avatar-path}")
-    private String avatarPath;
-
-    @Value("${file.upload.avatar-max-size}")
-    private String avatarMaxSize;
-
-    @Value("${file.upload.avatar-allowed-types}")
-    private String avatarTypes;
-
-    /**
-     * 上传用户头像
-     *
-     * @param file   上传的文件
-     * @param userId 用户ID
-     * @return 文件相对路径，如 /avatar/userId_xxx.png
-     */
-    public String uploadAvatar(MultipartFile file, String userId) {
-        // 1. 校验图片文件
-        validateFile(file, avatarMaxSize, avatarTypes);
-        // 2. 上传文件通用方法
-        return uploadFile(file, userId, avatarPath);
-    }
-
     /**
      * 默认文件上传根目录从file.upload.base-path配置中获取
      * 上传文件通用方法 完整路径：basePath + File.separator + filePath + File.separator + yearMonth
@@ -55,7 +32,7 @@ public class FileUtil {
      * @param filePath  文件上传路径，该路径填业务的子路径，方法内部会自动拼接完整路径
      * @return 文件相对路径
      */
-    private String uploadFile(MultipartFile file, String userId, String filePath) {
+    public String uploadFile(MultipartFile file, String userId, String filePath) {
         // 2. 获取文件扩展名
         String originalFilename = file.getOriginalFilename();
         String extension = getFileExtension(originalFilename);

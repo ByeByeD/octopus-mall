@@ -103,7 +103,7 @@ public class AuthCommonController {
      * 获取当前登录用户信息
      */
     @PostMapping("/getUserInfo")
-    @Permission(name = "user:getInfo")
+//    @Permission(name = "user:getInfo")
     public ResponseDto getUserInfo() {
         UserInfoRespDto userInfo = otpsUserService.getUserInfo();
         ResponseDto responseDto = new ResponseDto("0", "success");

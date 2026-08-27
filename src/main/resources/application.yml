@@ -1,5 +1,10 @@
 spring.application.name: octopus-mall
 spring:
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 5MB
+      max-request-size: 10MB
   datasource:
     driver-class-name: oracle.jdbc.OracleDriver
     url: jdbc:oracle:thin:@//127.0.0.1:1521/orcl

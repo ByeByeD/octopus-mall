@@ -8,6 +8,7 @@ import com.octopusmall.common.util.CommonUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,6 +28,15 @@ public class FileController {
 
     private final FileUtil fileUtil;
 
+    @Value("${file.upload.avatar-path}")
+    private String avatarPath;
+
+    @Value("${file.upload.avatar-max-size}")
+    private String avatarMaxSize;
+
+    @Value("${file.upload.avatar-allowed-types}")
+    private String avatarTypes;
+
     /**
      * 上传用户头像
      *
@@ -37,9 +47,11 @@ public class FileController {
     public ResponseDto uploadAvatar(@RequestParam("file") MultipartFile file) {
         String userId = CommonUtil.getUserId();
         log.info("收到头像上传请求，用户ID: {}, 文件名: {}", userId, file.getOriginalFilename());
-        
-        // 上传文件
-        String relativePath = fileUtil.uploadAvatar(file, userId);
+
+        // 1. 校验图片文件
+        fileUtil.validateFile(file, avatarMaxSize, avatarTypes);
+        // 2. 上传文件
+        String relativePath = fileUtil.uploadFile(file, userId, avatarPath);
         
         // 构建响应
         FileUploadRespDto respDto = new FileUploadRespDto();
