@@ -5,12 +5,12 @@ import com.octopusmall.common.annotation.Permission;
 import com.octopusmall.common.global.dto.LoginReqDto;
 import com.octopusmall.common.global.dto.LoginRespDto;
 import com.octopusmall.common.global.dto.RegisterReqDto;
-import com.octopusmall.common.global.dto.RegisterRespDto;
 import com.octopusmall.common.global.dto.ResponseDto;
 import com.octopusmall.common.global.dto.UpdatePwdReqDto;
 import com.octopusmall.common.global.dto.AddUserPermissionReqDto;
 import com.octopusmall.common.global.dto.DeleteUserPermissionReqDto;
 import com.octopusmall.common.global.dto.UpdateUserInfoReqDto;
+import com.octopusmall.common.global.dto.UserInfoRespDto;
 import com.octopusmall.common.global.service.OtpsUserPermissionService;
 import com.octopusmall.common.global.service.OtpsUserService;
 import jakarta.validation.Valid;
@@ -36,7 +36,7 @@ public class AuthCommonController {
     @IgnoreLoginValid // 不需要进行用户登录校验
     @PostMapping("/register")
     public ResponseDto register(@Valid @RequestBody RegisterReqDto req) {
-        RegisterRespDto register = otpsUserService.register(req);
+        UserInfoRespDto register = otpsUserService.register(req);
         ResponseDto responseDto = new ResponseDto();
         responseDto.setResultCode("0");
         responseDto.setResultMsg("success");
@@ -91,10 +91,23 @@ public class AuthCommonController {
     @PostMapping("/updateUserInfo")
     @Permission(name = "user:updateUserInfo")
     public ResponseDto updateUserInfo(@Valid @RequestBody UpdateUserInfoReqDto reqDto) {
-        otpsUserService.updateUserInfo(reqDto);
+        UserInfoRespDto userInfo = otpsUserService.updateUserInfo(reqDto);
         ResponseDto responseDto = new ResponseDto();
         responseDto.setResultCode("0");
         responseDto.setResultMsg("success");
+        responseDto.setResultData(userInfo);
+        return responseDto;
+    }
+
+    /**
+     * 获取当前登录用户信息
+     */
+    @PostMapping("/getUserInfo")
+    @Permission(name = "user:getInfo")
+    public ResponseDto getUserInfo() {
+        UserInfoRespDto userInfo = otpsUserService.getUserInfo();
+        ResponseDto responseDto = new ResponseDto("0", "success");
+        responseDto.setResultData(userInfo);
         return responseDto;
     }
 

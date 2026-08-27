@@ -6,9 +6,9 @@ import com.octopusmall.common.exception.OtpsBaseException;
 import com.octopusmall.common.global.dto.LoginReqDto;
 import com.octopusmall.common.global.dto.LoginRespDto;
 import com.octopusmall.common.global.dto.RegisterReqDto;
-import com.octopusmall.common.global.dto.RegisterRespDto;
 import com.octopusmall.common.global.dto.UpdatePwdReqDto;
 import com.octopusmall.common.global.dto.UpdateUserInfoReqDto;
+import com.octopusmall.common.global.dto.UserInfoRespDto;
 import com.octopusmall.common.global.entity.OtpsUser;
 import com.octopusmall.common.global.entity.OtpsUserHis;
 import com.octopusmall.common.global.mapper.OtpsUserMapper;
@@ -49,7 +49,7 @@ public class OtpsUserServiceImpl implements OtpsUserService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public RegisterRespDto register(RegisterReqDto req) throws RuntimeException {
+    public UserInfoRespDto register(RegisterReqDto req) throws RuntimeException {
         //校验账号是否存在
         OtpsUser existAccount = otpsUserMapper.selectByAccount(req.getAccount());
         if (existAccount != null) {
@@ -90,8 +90,8 @@ public class OtpsUserServiceImpl implements OtpsUserService {
             throw new OtpsBaseException("注册写入数据库失败");
         }
 
-        RegisterRespDto resp = new RegisterRespDto();
-        resp.setUserId(user.getId());
+        UserInfoRespDto resp = new UserInfoRespDto();
+        resp.setId(user.getId());
         resp.setAccount(user.getAccount());
         resp.setType(user.getType());
         resp.setNickname(user.getNickname());
@@ -115,9 +115,12 @@ public class OtpsUserServiceImpl implements OtpsUserService {
 
         LoginRespDto resp = new LoginRespDto();
         resp.setToken(token);
-        resp.setUserId(user.getId());
+        resp.setId(user.getId());
         resp.setNickname(user.getNickname());
-        resp.setUserType(user.getType());
+        resp.setType(user.getType());
+        resp.setPhoneNumber(user.getPhoneNumber());
+        resp.setEmail(user.getEmail());
+        resp.setUserImage(user.getUserImage());
         return resp;
     }
 
@@ -151,7 +154,7 @@ public class OtpsUserServiceImpl implements OtpsUserService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean updateUserInfo(UpdateUserInfoReqDto reqDto) {
+    public UserInfoRespDto updateUserInfo(UpdateUserInfoReqDto reqDto) {
         String userId = CommonUtil.getUserId();
 
         // 查询当前用户信息
@@ -230,6 +233,37 @@ public class OtpsUserServiceImpl implements OtpsUserService {
             }
         }
 
-        return true;
+        UserInfoRespDto userInfoRespDto = new UserInfoRespDto();
+        userInfoRespDto.setId(currentUser.getId());
+        userInfoRespDto.setAccount(currentUser.getAccount());
+        userInfoRespDto.setNickname(currentUser.getNickname());
+        userInfoRespDto.setUserImage(currentUser.getUserImage());
+        userInfoRespDto.setPhoneNumber(currentUser.getPhoneNumber());
+        userInfoRespDto.setEmail(currentUser.getEmail());
+        userInfoRespDto.setType(currentUser.getType());
+        userInfoRespDto.setStatus(currentUser.getStatus());
+        userInfoRespDto.setCreateTime(currentUser.getCreateTime());
+        return userInfoRespDto;
+    }
+
+    @Override
+    public UserInfoRespDto getUserInfo() {
+        String userId = CommonUtil.getUserId();
+        OtpsUser user = otpsUserMapper.selectById(userId);
+        if (user == null) {
+            throw new OtpsBaseException("用户不存在");
+        }
+
+        UserInfoRespDto userInfoRespDto = new UserInfoRespDto();
+        userInfoRespDto.setId(user.getId());
+        userInfoRespDto.setAccount(user.getAccount());
+        userInfoRespDto.setNickname(user.getNickname());
+        userInfoRespDto.setUserImage(user.getUserImage());
+        userInfoRespDto.setPhoneNumber(user.getPhoneNumber());
+        userInfoRespDto.setEmail(user.getEmail());
+        userInfoRespDto.setType(user.getType());
+        userInfoRespDto.setStatus(user.getStatus());
+        userInfoRespDto.setCreateTime(user.getCreateTime());
+        return userInfoRespDto;
     }
 }
