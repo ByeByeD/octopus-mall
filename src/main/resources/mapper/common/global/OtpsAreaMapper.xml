@@ -8,16 +8,16 @@
         select * from otps_area a
         <where>
             <if test="areaReqDto.areaCode != null and areaReqDto.areaCode != ''">
-                a.area_code = #{areaReqDto.areaCode}
+                and a.area_code = #{areaReqDto.areaCode}
             </if>
             <if test="areaReqDto.areaName != null and areaReqDto.areaName != ''">
-                a.area_name = #{areaReqDto.areaName}
+                and a.area_name = #{areaReqDto.areaName}
             </if>
             <if test="areaReqDto.areaLevel != null">
-                a.area_level = #{areaReqDto.areaLevel}
+                and a.area_level = #{areaReqDto.areaLevel}
             </if>
             <if test="areaReqDto.parentCode != null and areaReqDto.parentCode != ''">
-                a.parent_code = #{areaReqDto.parentCode}
+                and a.parent_code = #{areaReqDto.parentCode}
             </if>
         </where>
     </select>
