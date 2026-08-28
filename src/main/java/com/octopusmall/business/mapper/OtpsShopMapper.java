@@ -1,4 +1,4 @@
-package com.octopusmall.common.global.mapper;
+package com.octopusmall.business.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.octopusmall.business.dto.QueryShopReqDto;

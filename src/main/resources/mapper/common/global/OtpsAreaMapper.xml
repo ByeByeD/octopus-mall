@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.octopusmall.common.global.mapper.OtpsAreaMapper">
+
+    <select id="getAreaListByCon" resultType="com.octopusmall.common.global.entity.OtpsArea">
+        select * from otps_area a
+        <where>
+            <if test="areaReqDto.areaCode != null and areaReqDto.areaCode != ''">
+                a.area_code = #{areaReqDto.areaCode}
+            </if>
+            <if test="areaReqDto.areaName != null and areaReqDto.areaName != ''">
+                a.area_name = #{areaReqDto.areaName}
+            </if>
+            <if test="areaReqDto.areaLevel != null">
+                a.area_level = #{areaReqDto.areaLevel}
+            </if>
+            <if test="areaReqDto.parentCode != null and areaReqDto.parentCode != ''">
+                a.parent_code = #{areaReqDto.parentCode}
+            </if>
+        </where>
+    </select>
+</mapper>

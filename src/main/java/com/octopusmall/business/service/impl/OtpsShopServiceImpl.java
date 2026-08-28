@@ -8,7 +8,7 @@ import com.octopusmall.business.dto.ShopRespDto;
 import com.octopusmall.business.dto.UpdateShopReqDto;
 import com.octopusmall.business.entity.OtpsShop;
 import com.octopusmall.common.global.entity.OtpsUser;
-import com.octopusmall.common.global.mapper.OtpsShopMapper;
+import com.octopusmall.business.mapper.OtpsShopMapper;
 import com.octopusmall.common.global.mapper.OtpsUserMapper;
 import com.octopusmall.common.util.CommonUtil;
 import lombok.RequiredArgsConstructor;

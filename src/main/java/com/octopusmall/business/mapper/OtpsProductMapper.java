@@ -1,14 +1,12 @@
-package com.octopusmall.common.global.mapper;
+package com.octopusmall.business.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.octopusmall.business.dto.ProductRespDto;
 import com.octopusmall.business.dto.QueryProductReqDto;
 import com.octopusmall.business.entity.OtpsProduct;
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
-@Mapper
 public interface OtpsProductMapper extends BaseMapper<OtpsProduct> {
 
     int insertProduct(@Param("product") OtpsProduct product);

@@ -9,7 +9,7 @@ import com.octopusmall.business.entity.OtpsProduct;
 import com.octopusmall.business.service.OtpsProductService;
 import com.octopusmall.business.service.OtpsShopService;
 import com.octopusmall.common.exception.OtpsBaseException;
-import com.octopusmall.common.global.mapper.OtpsProductMapper;
+import com.octopusmall.business.mapper.OtpsProductMapper;
 import com.octopusmall.common.util.CommonUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
