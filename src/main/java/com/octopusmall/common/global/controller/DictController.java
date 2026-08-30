@@ -6,8 +6,9 @@ import com.octopusmall.common.global.entity.OtpsDict;
 import com.octopusmall.common.global.service.OtpsDictService;
 import com.octopusmall.common.util.CommonUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -18,8 +19,8 @@ import java.util.List;
 public class DictController {
     private final OtpsDictService otpsDictService;
 
-    @PostMapping("/getDictInfosById")
-    public ResponseDto getDictInfosById(String dictId) {
+    @GetMapping("/getDictInfosById")
+    public ResponseDto getDictInfosById(@RequestParam String dictId) {
         if (CommonUtil.isEmpty(dictId)) {
             throw new OtpsBaseException("dictId 不能为空");
         }

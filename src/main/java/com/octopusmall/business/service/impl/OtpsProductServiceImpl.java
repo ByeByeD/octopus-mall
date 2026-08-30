@@ -3,6 +3,7 @@ package com.octopusmall.business.service.impl;
 import com.octopusmall.business.dto.AddProductReqDto;
 import com.octopusmall.business.dto.ProductRespDto;
 import com.octopusmall.business.dto.QueryProductReqDto;
+import com.octopusmall.business.dto.QueryShopReqDto;
 import com.octopusmall.business.dto.ShopRespDto;
 import com.octopusmall.business.dto.UpdateProductReqDto;
 import com.octopusmall.business.entity.OtpsProduct;
@@ -27,7 +28,9 @@ public class OtpsProductServiceImpl implements OtpsProductService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void addProduct(AddProductReqDto req) {
-        ShopRespDto shop = otpsShopService.getShopByUserId(req.getShopId());
+        QueryShopReqDto queryShopReqDto = new QueryShopReqDto();
+        queryShopReqDto.setId(req.getShopId());
+        ShopRespDto shop = otpsShopService.getShopByCondition(queryShopReqDto);
         if (shop == null) {
             throw new OtpsBaseException("您还没有创建店铺，无法添加商品");
         }

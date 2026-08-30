@@ -15,7 +15,11 @@ public class ShopRespDto {
 
     private String province;
 
+    private String provinceName;
+
     private String city;
+
+    private String cityName;
 
     private String detailAddress;
 

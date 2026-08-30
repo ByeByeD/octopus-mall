@@ -129,7 +129,9 @@
             s.user_id,
             s.shop_name,
             s.province,
+            d4.area_name as province_name,
             s.city,
+            d5.area_name as city_name,
             s.detail_address,
             s.category,
             d1.enum_name AS category_name,
@@ -152,6 +154,8 @@
         LEFT JOIN otps_dict d1 ON d1.dict_id = 'shop:category' AND d1.enum_code = s.category
         LEFT JOIN otps_dict d2 ON d2.dict_id = 'shop:audit_status' AND d2.enum_code = s.audit_status
         LEFT JOIN otps_dict d3 ON d3.dict_id = 'shop:shop_status' AND d3.enum_code = s.shop_status
+        left join otps_area d4 on s.province = d4.area_code
+        left join otps_area d5 on s.city = d5.area_code
         WHERE s.user_id = #{userId}
     </select>
 
