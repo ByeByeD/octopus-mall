@@ -125,16 +125,28 @@
 			<version>${mybatis.plus.version}</version>
 		</dependency>
 
-		<!-- LangChain4j SpringBoot自动装配 -->
 		<dependency>
 			<groupId>dev.langchain4j</groupId>
-			<artifactId>langchain4j-spring-boot-starter</artifactId>
+			<artifactId>langchain4j</artifactId>
+			<version>${langchain4j.version}</version>
 		</dependency>
-		<!-- OpenAI兼容客户端，对接DeepSeek大模型 -->
+
 		<dependency>
 			<groupId>dev.langchain4j</groupId>
-			<artifactId>langchain4j-open-ai-spring-boot-starter</artifactId>
+			<artifactId>langchain4j-open-ai</artifactId>
+			<version>${langchain4j.version}</version>
 		</dependency>
+<!--		spring-boot-starter的langchain4j 1.17.2跟 springboot 3.2.11不兼容，需要适配高版本spring boot-->
+<!--		&lt;!&ndash; LangChain4j SpringBoot自动装配 &ndash;&gt;-->
+<!--		<dependency>-->
+<!--			<groupId>dev.langchain4j</groupId>-->
+<!--			<artifactId>langchain4j-spring-boot-starter</artifactId>-->
+<!--		</dependency>-->
+<!--		&lt;!&ndash; OpenAI兼容客户端，对接DeepSeek大模型 &ndash;&gt;-->
+<!--		<dependency>-->
+<!--			<groupId>dev.langchain4j</groupId>-->
+<!--			<artifactId>langchain4j-open-ai-spring-boot-starter</artifactId>-->
+<!--		</dependency>-->
 
 		<!-- Hutool工具类，备用雪花ID工具、常用工具方法 -->
 		<dependency>

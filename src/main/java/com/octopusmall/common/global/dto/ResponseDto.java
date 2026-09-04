@@ -19,4 +19,12 @@ public class ResponseDto {
         this.resultMsg = resultMsg;
     }
 
+    public static ResponseDto success() {
+        return new ResponseDto("0", "success");
+    }
+
+    public static ResponseDto fail() {
+        return new ResponseDto("-1", "");
+    }
+
 }
