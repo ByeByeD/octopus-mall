@@ -48,7 +48,15 @@ public class CommonUtil {
      */
     public static String getSnowID() {
         long id = SNOWFLAKE.nextId();
-        return String.format("%020d", id);
+        String s = String.valueOf(id);
+        int length = 20;
+        if (s.length() > length) {
+            s = s.substring(0, length);
+        }
+        else {
+            s = s + "0".repeat(length - s.length());
+        }
+        return s;
     }
 
     public static String getUserId() {

@@ -14,6 +14,6 @@ public class OtpsChatSession {
     private String id;
     private String userId;
     private String name;
-    private LocalDateTime creatTime;
+    private LocalDateTime createTime;
     private LocalDateTime updateTime;
 }
