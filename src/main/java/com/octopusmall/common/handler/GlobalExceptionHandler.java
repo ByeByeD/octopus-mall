@@ -8,6 +8,9 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.context.request.WebRequest;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,7 +66,13 @@ public class GlobalExceptionHandler {
      * 其他运行时异常兜底处理
      */
     @ExceptionHandler(RuntimeException.class)
-    public ResponseDto handleRuntimeException(RuntimeException e) {
+    public ResponseDto handleRuntimeException(RuntimeException e, WebRequest request) {
+        String uri = ((ServletWebRequest)request).getRequest().getRequestURI();
+        // 你的SSE流式接口路径
+        if(uri.contains("/business2SessionFlux")){
+            // SSE长连接异常不要走全局JSON返回；直接返回null，让SseEmitter自己completeWithError处理
+            return null;
+        }
         log.error("系统异常: ", e);
         ResponseDto resp = new ResponseDto();
         resp.setResultCode("-1");

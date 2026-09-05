@@ -3,15 +3,15 @@ package com.octopusmall.common.aichat.configuration;
 import com.octopusmall.common.aichat.service.CustomAIService;
 import com.octopusmall.common.aichat.service.CustomChatMemoryStore;
 import com.octopusmall.common.aichat.service.CustomSessionAIService;
+import com.octopusmall.common.aichat.service.CustomSessionStreamingAIService;
 import dev.langchain4j.memory.ChatMemory;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.memory.chat.TokenWindowChatMemory;
 import dev.langchain4j.model.openai.OpenAiChatModel;
+import dev.langchain4j.model.openai.OpenAiStreamingChatModel;
 import dev.langchain4j.model.openai.OpenAiTokenCountEstimator;
 import dev.langchain4j.service.AiServices;
-import dev.langchain4j.service.MemoryId;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -44,6 +44,18 @@ public class AIAgentConfiguration {
     @Bean
     public OpenAiChatModel getOpenAiChatModel() {
         OpenAiChatModel openAiChatModel = OpenAiChatModel.builder()
+                .baseUrl(baseUrl)
+                .apiKey(System.getenv("BAILIAN_API_KEY"))
+                .modelName("qwen3.7-plus")
+                .logRequests(true)
+                .logResponses(true)
+                .build();
+        return openAiChatModel;
+    }
+
+    @Bean
+    public OpenAiStreamingChatModel getOpenAiStreamingChatModel() {
+        OpenAiStreamingChatModel openAiChatModel = OpenAiStreamingChatModel.builder()
                 .baseUrl(baseUrl)
                 .apiKey(System.getenv("BAILIAN_API_KEY"))
                 .modelName("qwen3.7-plus")
@@ -106,5 +118,18 @@ public class AIAgentConfiguration {
         return customSessionAIService;
     }
 
-
+    /**
+     * 流式调用AI Service
+     * @param openAiStreamingChatModel
+     * @param chatMemoryProvider
+     * @return
+     */
+    @Bean
+    public CustomSessionStreamingAIService getCustomSessionStreamingAIService(OpenAiStreamingChatModel openAiStreamingChatModel, ChatMemoryProvider chatMemoryProvider) {
+        CustomSessionStreamingAIService streamingAIService = AiServices.builder(CustomSessionStreamingAIService.class)
+                .streamingChatModel(openAiStreamingChatModel)
+                .chatMemoryProvider(chatMemoryProvider)
+                .build();
+        return streamingAIService;
+    }
 }

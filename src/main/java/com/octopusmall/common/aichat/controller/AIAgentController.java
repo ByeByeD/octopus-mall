@@ -7,17 +7,26 @@ import com.octopusmall.common.aichat.dto.UpdateSessionNameReqDto;
 import com.octopusmall.common.aichat.service.AIChatSessionService;
 import com.octopusmall.common.aichat.service.CustomAIService;
 import com.octopusmall.common.aichat.service.CustomSessionAIService;
+import com.octopusmall.common.aichat.service.CustomSessionStreamingAIService;
 import com.octopusmall.common.exception.OtpsBaseException;
 import com.octopusmall.common.global.dto.ResponseDto;
 import com.octopusmall.common.util.CommonUtil;
+import dev.langchain4j.model.chat.response.ChatResponse;
+import dev.langchain4j.model.chat.response.PartialThinking;
 import dev.langchain4j.model.openai.OpenAiChatModel;
+import dev.langchain4j.rag.content.Content;
+import dev.langchain4j.service.TokenStream;
+import dev.langchain4j.service.tool.ToolExecution;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +40,8 @@ public class AIAgentController {
     public final CustomAIService customAIService;
 
     private final CustomSessionAIService customSessionAIService;
+
+    private final CustomSessionStreamingAIService customSessionStreamingAIService;
 
     private final AIChatSessionService aiChatSessionService;
 
@@ -79,6 +90,106 @@ public class AIAgentController {
         ResponseDto success = ResponseDto.success();
         success.setResultData(chat);
         return success;
+    }
+
+    /**
+     * 实现完全会话管理的流式响应接口
+     * 关键设计：使用 Spring MVC 原生的 SseEmitter（org.springframework.web.servlet.mvc.method.annotation.SseEmitter），
+     * 它会自动设置 Content-Type: text/event-stream，并在每个 send() 调用时立即 flush 到客户端。
+     * 这是 Spring MVC 6.x 中处理 SSE 流式响应的官方推荐方式，不需要任何额外的 HttpMessageConverter。
+     *
+     * @param requestMap 包含 message 和 sessionId
+     * @return SseEmitter 通过 event-stream 协议逐字推送 AI token
+     */
+    @PostMapping(value = "/business2SessionFlux", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public SseEmitter business2SessionFlux(@RequestBody HashMap<String, Object> requestMap, HttpServletResponse response) {
+        String message = (String) requestMap.get("message");
+        String sessionId = (String) requestMap.get("sessionId");
+
+        if (CommonUtil.isEmpty(message)) {
+            throw new OtpsBaseException("message cannot empty");
+        }
+        if (CommonUtil.isEmpty(sessionId)) {
+            throw new OtpsBaseException("sessionId cannot empty");
+        }
+        // 关闭Tomcat缓存
+        response.setBufferSize(0);
+
+        // 1. 创建 SseEmitter，0 表示永不超时（也可指定毫秒数）
+        SseEmitter emitter = new SseEmitter(180_000L);
+
+        // 2. 在独立线程中订阅 Flux 并通过 emitter 推送每个 token
+        TokenStream tokenStream = customSessionStreamingAIService.chat(sessionId, message);
+
+        tokenStream
+                .onPartialResponse((String partialResponse) -> {
+                    try {
+                        // 输出普通内容token
+                        emitter.send(SseEmitter.event()
+                                .name("content")
+                                .data(partialResponse));
+                        // 必须要，否则刷不出去
+                        // 强制刷新输出流！！核心代码
+                        response.getOutputStream().flush();
+                    } catch (Exception e) {
+                        emitter.completeWithError(e);
+                    }
+                })
+                .onPartialThinking((PartialThinking partialThinking) -> {
+                    try {
+                        // 输出推理链内容（deepseek / o1 思考内容）
+                        emitter.send(SseEmitter.event()
+                                .name("thinking")
+                                .data(partialThinking.text()));
+                        // 强制刷新输出流！！核心代码
+                        response.getOutputStream().flush();
+                    } catch (Exception e) {
+                        emitter.completeWithError(e);
+                    }
+                })
+                .onRetrieved((List<Content> contents) -> {
+                    try {
+                        // RAG检索到的文档
+                        emitter.send(SseEmitter.event()
+                                .name("retrieved")
+                                .data(contents));
+                        // 强制刷新输出流！！核心代码
+                        response.getOutputStream().flush();
+                    } catch (Exception e) {
+                        emitter.completeWithError(e);
+                    }
+                })
+                .beforeToolExecution((beforeToolExecution) -> {
+                    try {
+                        // 调用工具之前
+                        emitter.send(SseEmitter.event()
+                                .name("beforeTool")
+                                .data(beforeToolExecution));
+                        // 强制刷新输出流！！核心代码
+                        response.getOutputStream().flush();
+                    } catch (Exception e) {
+                        emitter.completeWithError(e);
+                    }
+                })
+                .onToolExecuted((ToolExecution toolExecution) -> {
+                    try {
+                        // 工具调用完成
+                        emitter.send(SseEmitter.event()
+                                .name("toolExecuted")
+                                .data(toolExecution));
+                        // 强制刷新输出流！！核心代码
+                        response.getOutputStream().flush();
+                    } catch (Exception e) {
+                        emitter.completeWithError(e);
+                    }
+                })
+                .onCompleteResponse((ChatResponse chatResponse) -> {
+                    emitter.complete();
+                })
+                .onError(emitter::completeWithError)
+                .start(); // ⚠️ 必须调用 .start() 才会真正发起LLM请求
+
+        return emitter;
     }
 
     /**
